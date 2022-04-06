@@ -11,6 +11,8 @@
 #include <tuple>
 #include <numeric>
 #include <algorithm>
+#include <optional>
+#include <tuple>
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
@@ -35,21 +37,28 @@ enum class DocumentStatus {
     REMOVED,
 };
 
+template <typename StringContainer>
+std::set<std::string> MakeUniqueNonEmptyStrings(const StringContainer& strings){
+    std::set<std::string> non_empty_strings;
+    for(const std::string str : strings){
+        if(!str.empty()){
+            non_empty_strings.insert(str);
+        }
+    }
+    return non_empty_strings;
+}
+
 class SearchServer {
 public:
+
+    inline static constexpr int INVALID_DOCUMENT_ID = -1;
+
     SearchServer() = default;
 
-    explicit SearchServer(const std::string& stop_words){
-        const std::vector<std::string> words = SplitIntoWords(stop_words);
-        stop_words_.clear();
-        stop_words_.insert(words.cbegin(), words.cend());
-    }
+    template <typename StringContainer>
+    explicit SearchServer(const StringContainer& stop_words) : stop_words_(MakeUniqueNonEmptyStrings(stop_words)){}
 
-    template <typename StringCollection>
-    explicit SearchServer(const StringCollection& stop_words){
-        stop_words_.clear();
-        stop_words_.insert(stop_words.cbegin(), stop_words.cend());
-    }
+    explicit SearchServer(const std::string& stop_words_text) : SearchServer(SplitIntoWords(stop_words_text)) {}
 
     void SetStopWords(const std::string&);
 
@@ -76,11 +85,19 @@ public:
 
     std::vector<Document> FindTopDocuments(const std::string&, DocumentStatus) const;
 
-    std::vector<Document> FindTopDocuments(const std::string& raw_query) const;
+    std::vector<Document> FindTopDocuments(const std::string&) const;
 
     int GetDocumentCount() const;
 
-    std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(const std::string&, int) const;
+    std::tuple<std::vector<std::string>, DocumentStatus>  MatchDocument(const std::string&, int) const;
+
+    int GetDocumentId(size_t) const;
+
+    static bool IsValidWord(const std::string& word) {
+        return std::none_of(word.cbegin(), word.cend(),[](char c){
+            return c >= '\0' && c < ' ';
+        });
+    }
 
     struct DocumentData {
         int rating;
@@ -103,6 +120,7 @@ private:
     std::set<std::string> stop_words_;
     std::map<std::string, std::map<int, double>> word_to_document_freqs_;
     std::map<int, DocumentData> documents_;
+    std::vector<int> document_ids_;
 
     bool IsStopWord(const std::string&) const;
 
@@ -115,9 +133,9 @@ private:
         return std::accumulate(ratings.cbegin(), ratings.cend(), .0) / static_cast<int>(ratings.size());
     }
 
-    QueryWord ParseQueryWord(std::string) const;
+    QueryWord ParseQueryWord(std::string text) const;
 
-    Query ParseQuery(const std::string&) const;
+    Query ParseQuery(const std::string& text) const;
 
     double ComputeWordInverseDocumentFreq(const std::string&) const;
 

@@ -1,5 +1,4 @@
 #include "search_engine.h"
-#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <map>
@@ -44,6 +43,9 @@ void SearchServer::SetStopWords(const std::string& text) {
 }
 
 void SearchServer::AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings) {
+    if(document_id < 0 || documents_.count(document_id) > 0){
+        throw std::invalid_argument("Invalid agrument");
+    }
     const std::vector<std::string> words = SplitIntoWordsNoStop(document);
     const double inv_word_count = 1.0 / words.size();
     for (const std::string& word : words) {
@@ -54,6 +56,7 @@ void SearchServer::AddDocument(int document_id, const std::string& document, Doc
                                ComputeAverageRating(ratings),
                                status
                        });
+    document_ids_.push_back(document_id);
 }
 
 std::vector<Document> SearchServer::FindTopDocuments(const std::string& raw_query, DocumentStatus status) const {
@@ -88,7 +91,11 @@ std::tuple<std::vector<std::string>, DocumentStatus> SearchServer::MatchDocument
             break;
         }
     }
-    return {matched_words, documents_.at(document_id).status};
+    return std::make_tuple(matched_words, documents_.at(document_id).status);
+}
+
+int SearchServer::GetDocumentId(size_t index) const {
+    return document_ids_.at(index);
 }
 
 bool SearchServer::IsStopWord(const std::string& word) const {
@@ -98,6 +105,9 @@ bool SearchServer::IsStopWord(const std::string& word) const {
 std::vector<std::string> SearchServer::SplitIntoWordsNoStop(const std::string& text) const {
     std::vector<std::string> words;
     for (const std::string& word : SplitIntoWords(text)) {
+        if (!IsValidWord(word)) {
+            throw std::invalid_argument("Invalid argument");
+        }
         if (!IsStopWord(word)) {
             words.push_back(word);
         }
@@ -106,22 +116,24 @@ std::vector<std::string> SearchServer::SplitIntoWordsNoStop(const std::string& t
 }
 
 SearchServer::QueryWord SearchServer::ParseQueryWord(std::string text) const {
+    if (text.empty()) {
+        throw std::invalid_argument("Invalid argument");
+    }
     bool is_minus = false;
     if (text[0] == '-') {
         is_minus = true;
         text = text.substr(1);
     }
-    return {
-            text,
-            is_minus,
-            IsStopWord(text)
-    };
+    if (text.empty() || text[0] == '-' || !IsValidWord(text)) {
+        throw std::invalid_argument("Invalid argument");
+    }
+    return QueryWord{text, is_minus, IsStopWord(text)};
 }
 
 SearchServer::Query SearchServer::ParseQuery(const std::string& text) const {
-    SearchServer::Query query;
+    Query query;
     for (const std::string& word : SplitIntoWords(text)) {
-        const SearchServer::QueryWord query_word = ParseQueryWord(word);
+        const QueryWord query_word = ParseQueryWord(word);
         if (!query_word.is_stop) {
             if (query_word.is_minus) {
                 query.minus_words.insert(query_word.data);
