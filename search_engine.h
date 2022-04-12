@@ -22,7 +22,7 @@ int ReadLineWithNumber();
 
 std::vector<std::string> SplitIntoWords(const std::string&);
 
-struct Document {
+struct Document{
     explicit Document() : id(0), relevance(0), rating(0) {}
     explicit Document(int id, double relevance, int rating) : id(id), relevance(relevance), rating(rating) {}
     int id;
@@ -30,7 +30,7 @@ struct Document {
     int rating;
 };
 
-enum class DocumentStatus {
+enum class DocumentStatus{
     ACTUAL,
     IRRELEVANT,
     BANNED,
@@ -58,14 +58,14 @@ public:
     template <typename StringContainer>
     explicit SearchServer(const StringContainer& stop_words) : stop_words_(MakeUniqueNonEmptyStrings(stop_words)){}
 
-    explicit SearchServer(const std::string& stop_words_text) : SearchServer(SplitIntoWords(stop_words_text)) {}
+    explicit SearchServer(const std::string& stop_words_text) : SearchServer(SplitIntoWords(stop_words_text)){}
 
     void SetStopWords(const std::string&);
 
     void AddDocument(int, const std::string&, DocumentStatus, const std::vector<int>&);
 
     template <typename DocumentPredicate>
-    std::vector<Document> FindTopDocuments(const std::string& raw_query, DocumentPredicate document_predicate) const {
+    std::vector<Document> FindTopDocuments(const std::string& raw_query, DocumentPredicate document_predicate) const{
         const Query query = ParseQuery(raw_query);
         auto matched_documents = FindAllDocuments(query, document_predicate);
 
@@ -93,24 +93,24 @@ public:
 
     int GetDocumentId(size_t) const;
 
-    static bool IsValidWord(const std::string& word) {
+    static bool IsValidWord(const std::string& word){
         return std::none_of(word.cbegin(), word.cend(),[](char c){
             return c >= '\0' && c < ' ';
         });
     }
 
-    struct DocumentData {
+    struct DocumentData{
         int rating;
         DocumentStatus status;
     };
 
-    struct QueryWord {
+    struct QueryWord{
         std::string data;
         bool is_minus;
         bool is_stop;
     };
 
-    struct Query {
+    struct Query{
         std::set<std::string> plus_words;
         std::set<std::string> minus_words;
     };
@@ -140,7 +140,7 @@ private:
     double ComputeWordInverseDocumentFreq(const std::string&) const;
 
     template <typename DocumentPredicate>
-    std::vector<Document> FindAllDocuments(const Query& query, DocumentPredicate document_predicate) const {
+    std::vector<Document> FindAllDocuments(const Query& query, DocumentPredicate document_predicate) const{
         std::map<int, double> document_to_relevance;
         for (const std::string& word : query.plus_words) {
             if (word_to_document_freqs_.count(word) == 0) {

@@ -1,9 +1,6 @@
 #ifndef YANDEXPRACTICUMCPP_BUSMANAGER_H
 #define YANDEXPRACTICUMCPP_BUSMANAGER_H
 
-#endif //YANDEXPRACTICUMCPP_BUSMANAGER_H
-
-
 #include <iostream>
 #include <map>
 #include <string>
@@ -114,14 +111,14 @@ ostream& operator<<(ostream& os, const AllBusesResponse& r) {
 
 class BusManager {
 public:
-    void AddBus(const string& bus, const vector<string>& stops) {
+    void AddBus(const string& bus, const vector<string>& stops){
         buses_to_stops[bus] = stops;
         for(const std::string& stop : buses_to_stops[bus]){
             stops_to_buses[stop].push_back(bus);
         }
     }
 
-    BusesForStopResponse GetBusesForStop(const string& stop) const {
+    BusesForStopResponse GetBusesForStop(const string& stop) const{
         if(stops_to_buses.count(stop) == 0){
             return {stop, std::vector<std::string>{}};
         }else{
@@ -129,7 +126,7 @@ public:
         }
     }
 
-    StopsForBusResponse GetStopsForBus(const string& bus) const {
+    StopsForBusResponse GetStopsForBus(const string& bus) const{
         if(buses_to_stops.count(bus) == 0){
             return {bus, std::vector<std::string>{}, stops_to_buses};
         }else{
@@ -137,9 +134,11 @@ public:
         }
     }
 
-    AllBusesResponse GetAllBuses() const {
+    AllBusesResponse GetAllBuses() const{
         return {buses_to_stops};
     }
 private:
     std::map<std::string, std::vector<std::string>> buses_to_stops, stops_to_buses;
 };
+
+#endif //YANDEXPRACTICUMCPP_BUSMANAGER_H

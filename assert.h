@@ -4,8 +4,6 @@
 #ifndef YANDEXPRACTICUMCPP_ASSERT_H
 #define YANDEXPRACTICUMCPP_ASSERT_H
 
-#endif //YANDEXPRACTICUMCPP_ASSERT_H
-
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -26,7 +24,7 @@ void AssertEqualImp(const T& t, const U& u, const std::string& t_str, const std:
     }
 }
 
-void AssertImp(bool value, const std::string& expr_str, const std::string& file, const std::string& func, unsigned line, const std::string& hint) {
+void AssertImp(bool value, const std::string& expr_str, const std::string& file, const std::string& func, unsigned line, const std::string& hint){
     if(!value){
         std::cerr << file << "(" << line << "): " << func << ": ";
         std::cerr << "ASSERT(" << expr_str << ") failed. ";
@@ -45,3 +43,7 @@ void AssertImp(bool value, const std::string& expr_str, const std::string& file,
 #define ASSERT(value) AssertImp((value), #value, __FILE__, __FUNCTION__, __LINE__, "")
 
 #define ASSERT_HINT(value, hint) AssertImp((value), #value, __FILE__, __FUNCTION__, __LINE__, (hint))
+
+
+
+#endif //YANDEXPRACTICUMCPP_ASSERT_H

@@ -18,7 +18,7 @@ public:
 
     Rational(int value)
             : numerator_(value)
-            , denominator_(1) {
+            , denominator_(1){
     }
 
     Rational(int numerator, int denominator)
@@ -31,36 +31,36 @@ public:
         Normalize();
     }
 
-    int Numerator() const {
+    int Numerator() const{
         return numerator_;
     }
 
-    int Denominator() const {
+    int Denominator() const{
         return denominator_;
     }
 
-    Rational& operator+=(Rational right) {
+    Rational& operator+=(Rational right){
         numerator_ = numerator_ * right.denominator_ + right.numerator_ * denominator_;
         denominator_ *= right.denominator_;
         Normalize();
         return *this;
     }
 
-    Rational& operator-=(Rational right) {
+    Rational& operator-=(Rational right){
         numerator_ = numerator_ * right.denominator_ - right.numerator_ * denominator_;
         denominator_ *= right.denominator_;
         Normalize();
         return *this;
     }
 
-    Rational& operator*=(Rational right) {
+    Rational& operator*=(Rational right){
         numerator_ *= right.numerator_;
         denominator_ *= right.denominator_;
         Normalize();
         return *this;
     }
 
-    Rational& operator/=(Rational right) {
+    Rational& operator/=(Rational right){
         if(right.numerator_ == 0){
             throw std::invalid_argument("Division by zero");
         }
@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    void Normalize() {
+    void Normalize(){
         if (denominator_ < 0) {
             numerator_ = -numerator_;
             denominator_ = -denominator_;
@@ -85,11 +85,11 @@ private:
     int denominator_ = 1;
 };
 
-ostream& operator<<(ostream& output, Rational rational) {
+ostream& operator<<(ostream& output, Rational rational){
     return output << rational.Numerator() << '/' << rational.Denominator();
 }
 
-istream& operator>>(istream& input, Rational& rational) {
+istream& operator>>(istream& input, Rational& rational){
     int numerator;
     int denominator;
     char slash;
@@ -101,57 +101,57 @@ istream& operator>>(istream& input, Rational& rational) {
 
 // Unary plus and minus
 
-Rational operator+(Rational value) {
+Rational operator+(Rational value){
     return value;
 }
 
-Rational operator-(Rational value) {
+Rational operator-(Rational value){
     return {-value.Numerator(), value.Denominator()};
 }
 
 // Binary arithmetic operations
 
-Rational operator+(Rational left, Rational right) {
+Rational operator+(Rational left, Rational right){
     return left += right;
 }
 
-Rational operator-(Rational left, Rational right) {
+Rational operator-(Rational left, Rational right){
     return left -= right;
 }
 
-Rational operator*(Rational left, Rational right) {
+Rational operator*(Rational left, Rational right){
     return left *= right;
 }
 
-Rational operator/(Rational left, Rational right) {
+Rational operator/(Rational left, Rational right){
     return left /= right;
 }
 
 // Comparison operators
 
-bool operator==(Rational left, Rational right) {
+bool operator==(Rational left, Rational right){
     return left.Numerator() == right.Numerator() &&
            left.Denominator() == right.Denominator();
 }
 
-bool operator!=(Rational left, Rational right) {
+bool operator!=(Rational left, Rational right){
     return !(left == right);
 }
 
-bool operator<(Rational left, Rational right) {
+bool operator<(Rational left, Rational right){
     return left.Numerator() * right.Denominator() <
            left.Denominator() * right.Numerator();
 }
 
-bool operator>(Rational left, Rational right) {
+bool operator>(Rational left, Rational right){
     return left.Numerator() * right.Denominator() >
            left.Denominator() * right.Numerator();
 }
 
-bool operator>=(Rational left, Rational right) {
+bool operator>=(Rational left, Rational right){
     return !(left < right);
 }
 
-bool operator<=(Rational left, Rational right) {
+bool operator<=(Rational left, Rational right){
     return !(left > right);
 }

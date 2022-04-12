@@ -13,10 +13,13 @@
 #include <utility>
 #include <vector>
 
+
+using namespace std;
+
 // -------- Начало модульных тестов поисковой системы ----------
 
 // Тест проверяет, что поисковая система исключает стоп-слова при добавлении документов
-void TestExcludeStopWordsFromAddedDocumentContent() {
+void TestExcludeStopWordsFromAddedDocumentContent(){
     const int doc_id = 42;
     const string content = "cat in the city"s;
     const vector<int> ratings = {1, 2, 3};

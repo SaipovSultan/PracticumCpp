@@ -9,23 +9,23 @@
 #include <string_view>
 #include <deque>
 
-class Synonyms {
+class Synonyms{
 public:
-    void Add(const std::string& first_word, const std::string& second_word) {
+    void Add(const std::string& first_word, const std::string& second_word){
         std::string_view first_word_sv = GetCopyString(std::string_view(first_word));
         std::string_view second_word_sv = GetCopyString(std::string_view(second_word));
         synonyms_[first_word_sv].insert(second_word_sv);
         synonyms_[second_word_sv].insert(first_word_sv);
     }
 
-    size_t GetSynonymCount(const std::string& word) const {
+    size_t GetSynonymCount(const std::string& word) const{
         if(auto it = synonyms_.find(std::string_view(word));it != synonyms_.end()){
             return it->second.size();
         }
         return 0;
     }
 
-    bool AreSynonyms(const std::string& first_word, const std::string& second_word) const {
+    bool AreSynonyms(const std::string& first_word, const std::string& second_word) const{
         if(auto it = synonyms_.find(std::string_view(first_word));it != synonyms_.end()){
             return it->second.count(second_word);
         }

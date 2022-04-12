@@ -1,8 +1,6 @@
 #ifndef YANDEXPRACTICUMCPP_SIMPLETEST_H
 #define YANDEXPRACTICUMCPP_SIMPLETEST_H
 
-#endif //YANDEXPRACTICUMCPP_SIMPLETEST_H
-
 #include <string>
 #include <iostream>
 
@@ -14,3 +12,5 @@ void RunTestImp(Func func, const std::string func_str){
 }
 
 #define RUN_TEST(func) RunTestImp(func, #func)
+
+#endif //PRACTICUMCPP_RATIONAL_H
